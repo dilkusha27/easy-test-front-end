@@ -1,6 +1,33 @@
+import { useNavigate } from 'react-router-dom';
 import UploadButton from '../../assets/upload-button.svg';
+import { validateFile } from '../../utils/fileUtils';
 
 const UploadFileDropPage = () => {
+  const navigate = useNavigate();
+
+  // 파일 업로드 감지 핸들러 (추후 다른 모듈로 분리 필요)
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 업로드된 파일이 하나인지 확인 (수정 필요)
+    const file = e.target.files?.[0];
+
+    // 파일 유무 여부 확인
+    if (!file) return;
+
+    // 파일 확장자 유효성 검사
+    const result = validateFile(file);
+
+    // 파일 확장자 유효성
+    if (!result.valid) {
+      alert(result.message);
+
+      // 동일 파일 업로드 시 onChange 이벤트가 발생하지 않는 문제를 위한 초기화
+      e.target.value = '';
+      return;
+    }
+
+    navigate('/uploading', { state: { file } });
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {/* 각 단계에서 취해야 할 행동이나 상태를 알려주는 텍스트 */}
@@ -8,7 +35,7 @@ const UploadFileDropPage = () => {
       <div>
         {/* 업로드 전 컴포넌트 */}
         <p style={{ margin: '24px 0', fontSize: '28px', fontWeight: 'bold' }}>
-          Import your project file into Easytest.
+          Import your project file into Easy-Test.
         </p>
       </div>
       {/* <CenteredContainer> */}
@@ -66,6 +93,7 @@ const UploadFileDropPage = () => {
             name="file"
             id="fileInput"
             style={{ display: 'none' }}
+            onChange={(e) => handleFileChange(e)}
           />
         </div>
       </div>
