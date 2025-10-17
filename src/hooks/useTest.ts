@@ -30,7 +30,7 @@ export function getProcessingFileInfo() {
       if (processingFileCount < totalFileCount)
         setProcessingFileCount(processingFileCount + 1);
       else clearInterval(interval);
-    }, 500);
+    }, 1000);
   }, []);
 
   return {
@@ -49,15 +49,15 @@ export function getTestProgressRate() {
 
   // 테스트 진행률 상태 업데이트 함수
   const updateProgressRate = () => {
-    if (progressRate < 90) setProgressRate(progressRate + 5);
+    if (progressRate < 80) setProgressRate(progressRate + 5);
     else setProgressRate(progressRate + 1);
   };
 
   // (임시) TestProgressPage 렌더링 후 5초 간격으로 updateProgress 호출
   // 추후 백엔드와의 연동 통해 실시간으로 받아오는 방식으로 변경 필요
   useEffect(() => {
-    const interval = setInterval(updateProgressRate, 500);
-    if (progressRate >= 90) {
+    const interval = setInterval(updateProgressRate, 5000);
+    if (progressRate === 100) {
       clearInterval(interval);
     }
     return () => {
