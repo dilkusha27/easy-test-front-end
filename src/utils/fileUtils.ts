@@ -25,7 +25,8 @@ export const validateFile = (
   if (file.size > maxSize)
     return {
       valid: false,
-      message: `파일 크기가 업로드 가능한 용량을 초과하였습니다: ${file.size} > ${maxSize}`,
+      // refactor: 현재 byte => MB 기준으로 단위 환산 후 표시 예정
+      message: `파일 크기가 업로드 가능한 용량을 초과하였습니다: ${file.size}MB > ${maxSize}MB`,
     };
 
   // 모든 검증 통과 console로 확인
