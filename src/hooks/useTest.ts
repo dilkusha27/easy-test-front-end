@@ -25,13 +25,27 @@ export function getProcessingFileInfo() {
 
   // (임시) TestProgressPage 렌더링 후 1초 간격으로 processingFileCount 상태 업데이트
   // 추후 백엔드와의 연동 통해 실시간으로 받아오는 방식으로 변경 필요
+
+  // 이전 코드
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (processingFileCount < totalFileCount)
+  //       setProcessingFileCount(processingFileCount + 1);
+  //     else clearInterval(interval);
+  //   }, 1000);
+  // }, []);
+
+  // 수정 코드 (상태값 클로저로 인한 최신 값 반영 안되는 문제 해결)
   useEffect(() => {
     const interval = setInterval(() => {
-      if (processingFileCount < totalFileCount)
-        setProcessingFileCount(processingFileCount + 1);
-      else clearInterval(interval);
+      setProcessingFileCount((prev) => {
+        if (prev < totalFileCount) return prev + 1;
+        clearInterval(interval);
+        return prev;
+      });
     }, 1000);
-  }, []);
+    return () => clearInterval(interval);
+  }, [totalFileCount]);
 
   return {
     processingFileCount,
@@ -55,15 +69,30 @@ export function getTestProgressRate() {
 
   // (임시) TestProgressPage 렌더링 후 5초 간격으로 updateProgress 호출
   // 추후 백엔드와의 연동 통해 실시간으로 받아오는 방식으로 변경 필요
+
+  // 이전 코드
+  // useEffect(() => {
+  //   const interval = setInterval(updateProgressRate, 5000);
+  //   if (progressRate === 100) {
+  //     clearInterval(interval);
+  //   }
+  //   return () => {
+  //     clearInterval(interval);
+  //     // setProgressRate(100);
+  //   };
+  // }, []);
+
+  // 수정 코드 (상태값 클로저로 인한 최신 값 반영 안되는 문제 해결)
   useEffect(() => {
-    const interval = setInterval(updateProgressRate, 5000);
-    if (progressRate === 100) {
-      clearInterval(interval);
-    }
-    return () => {
-      clearInterval(interval);
-      // setProgressRate(100);
-    };
+    const interval = setInterval(() => {
+      setProgressRate((prev) => {
+        if (prev < 80) return prev + 5;
+        if (prev < 100) return prev + 1;
+        clearInterval(interval);
+        return prev;
+      });
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   return {
